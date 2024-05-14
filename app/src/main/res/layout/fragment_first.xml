@@ -32,22 +32,12 @@
             app:layout_constraintTop_toBottomOf="@+id/button_add_product" />
 
         <Button
-            android:id="@+id/button_filter_category1"
+            android:id="@+id/spinner_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Category 1"
+            android:text="@string/product_category"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.242"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-        <Button
-            android:id="@+id/button_filter_category2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Category 2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.814"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 

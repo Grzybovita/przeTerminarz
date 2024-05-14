@@ -1,6 +1,7 @@
 package com.example.przeterminarz
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.przeterminarz.databinding.FragmentSecondBinding
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -60,6 +62,10 @@ class SecondFragment : Fragment() {
         statesSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerState.adapter = statesSpinnerAdapter
 
+        binding.editTextExpirationDate.setOnClickListener {
+            showDatePickerDialog()
+        }
+
         arguments?.let {
             editMode = it.getBoolean("edit_mode", false)
             productToEdit = it.getParcelable("product")
@@ -76,7 +82,6 @@ class SecondFragment : Fragment() {
             }
         }
 
-        // Open gallery to pick image
         binding.buttonPickImage.setOnClickListener {
             openGallery()
         }
@@ -84,56 +89,76 @@ class SecondFragment : Fragment() {
         {
             binding.buttonSaveProduct.visibility = View.GONE
             binding.buttonSaveProduct.isEnabled = false
-            binding.buttonEditProduct.setOnClickListener {
-                val name = binding.editTextProductName.text.toString()
-                val category = Categories.valueOf(binding.spinnerCategory.selectedItem.toString())
-                val dateStr = binding.editTextExpirationDate.text.toString()
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val validToTimestamp = dateFormat.parse(dateStr)?.time ?: 0L
-                val amount = binding.editTextQuantity.text.toString().toIntOrNull() ?: 0
-                val state = States.valueOf(binding.spinnerState.selectedItem.toString())
-                val isDiscarded = binding.switchDiscarded.isChecked
-
-                // Update existing product
-                productToEdit?.let { product ->
-                    product.name = name
-                    product.image = selectedImageUri.toString()
-                    product.category = category
-                    product.expirationDate = validToTimestamp
-                    product.amount = amount
-                    product.state = state
-                    product.isDiscarded = isDiscarded
-
-                    productDAO.updateProduct(product)
-                }
-                findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-            }
+            binding.buttonEditProduct.setOnClickListener { updateProduct() }
         }
         else
         {
             binding.buttonEditProduct.visibility = View.GONE
             binding.buttonEditProduct.isEnabled = false
-            binding.buttonSaveProduct.setOnClickListener {
-                val name = binding.editTextProductName.text.toString()
-                val category = Categories.valueOf(binding.spinnerCategory.selectedItem.toString())
-                val dateStr = binding.editTextExpirationDate.text.toString()
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                val validToTimestamp = dateFormat.parse(dateStr)?.time ?: 0L
-                val amount = binding.editTextQuantity.text.toString().toIntOrNull() ?: 0
-                val state = States.valueOf(binding.spinnerState.selectedItem.toString())
-                val isDiscarded = binding.switchDiscarded.isChecked
-
-                selectedImageUri?.let { uri ->
-                    //TODO delete it later probably
-                }
-                val newProduct = Product(id, name, selectedImageUri.toString(), category, validToTimestamp, amount, state, isDiscarded )
-                productDAO.addProduct(newProduct)
-
-                findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-            }
+            binding.buttonSaveProduct.setOnClickListener { saveProduct() }
         }
     }
 
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                val selectedDate = Calendar.getInstance().apply {
+                    set(year, month, dayOfMonth)
+                }.time
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                binding.editTextExpirationDate.setText(dateFormat.format(selectedDate))
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.show()
+    }
+
+    private fun saveProduct() {
+        val name = binding.editTextProductName.text.toString()
+        val category = Categories.valueOf(binding.spinnerCategory.selectedItem.toString())
+        val dateStr = binding.editTextExpirationDate.text.toString()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val validToTimestamp = dateFormat.parse(dateStr)?.time ?: 0L
+        val amount = binding.editTextQuantity.text.toString().toIntOrNull() ?: 0
+        val state = States.valueOf(binding.spinnerState.selectedItem.toString())
+        val isDiscarded = binding.switchDiscarded.isChecked
+
+        selectedImageUri?.let { uri ->
+
+        }
+
+        val newProduct = Product(0, name, selectedImageUri.toString(), category, validToTimestamp, amount, state, isDiscarded)
+        productDAO.addProduct(newProduct)
+        findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+    }
+
+    private fun updateProduct() {
+        val name = binding.editTextProductName.text.toString()
+        val category = Categories.valueOf(binding.spinnerCategory.selectedItem.toString())
+        val dateStr = binding.editTextExpirationDate.text.toString()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val validToTimestamp = dateFormat.parse(dateStr)?.time ?: 0L
+        val amount = binding.editTextQuantity.text.toString().toIntOrNull() ?: 0
+        val state = States.valueOf(binding.spinnerState.selectedItem.toString())
+        val isDiscarded = binding.switchDiscarded.isChecked
+
+        productToEdit?.let { product ->
+            product.name = name
+            product.image = selectedImageUri.toString()
+            product.category = category
+            product.expirationDate = validToTimestamp
+            product.amount = amount
+            product.state = state
+            product.isDiscarded = isDiscarded
+
+            productDAO.updateProduct(product)
+            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        }
+    }
 
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -141,7 +166,7 @@ class SecondFragment : Fragment() {
     }
 
     private fun loadImage(imageUri: String) {
-        // Load the image into the ImageView using Glide
+        //Load the image into the ImageView using Glide
         Glide.with(requireContext())
             .load(imageUri)
             .into(binding.imageViewProduct)

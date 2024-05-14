@@ -1,10 +1,13 @@
 package com.example.przeterminarz
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.LinearLayout
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.przeterminarz.databinding.FragmentFirstBinding
@@ -19,6 +22,7 @@ class FirstFragment() : Fragment() {
     private lateinit var productList : ArrayList<Product>
     private lateinit var productAdapter : ProductAdapter
     private lateinit var productDAO: ProductDAO
+    private var selectedCategories = HashSet<Categories>()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -41,7 +45,7 @@ class FirstFragment() : Fragment() {
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.adapter = productAdapter
 
-        updateListSizeTextView(productList.size)
+        updateListSizeTextView(productAdapter.itemCount)
 
         return binding.root
     }
@@ -53,17 +57,11 @@ class FirstFragment() : Fragment() {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
 
-        binding.buttonFilterCategory1.setOnClickListener {
-            productAdapter.filterByCategory(Categories.CATEGORY1)
-            updateListSizeTextView(productAdapter.itemCount)
-            //TODO test only, remove it later!
-            var products = productDAO.getAllProducts();
-            println(products);
-        }
-
-        binding.buttonFilterCategory2.setOnClickListener {
-            productAdapter.filterByCategory(Categories.CATEGORY2)
-            updateListSizeTextView(productAdapter.itemCount)
+        binding.spinnerCategory.setOnClickListener {
+            showCategoryMultiSelectDialog()
+            updateListSizeTextView(productAdapter.itemCount);
+            println("SIZE: " + productAdapter.itemCount);
+            println("SIZE2: " + productList.size);
         }
     }
 
@@ -81,5 +79,41 @@ class FirstFragment() : Fragment() {
             append(getString(R.string.list_size))
             append(size)
         }
+    }
+
+    private fun showCategoryMultiSelectDialog() {
+        val categories = Categories.entries
+        val checkedItems = BooleanArray(categories.size) { selectedCategories.contains(categories[it]) }
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(R.string.select_categories)
+
+        val inflater = requireActivity().layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_multiselect_categories, null)
+        val checkboxContainer = dialogView.findViewById<LinearLayout>(R.id.checkbox_container)
+
+        for (i in categories.indices) {
+            val category = categories[i]
+            val checkBox = CheckBox(requireContext()).apply {
+                text = category.name
+                isChecked = checkedItems[i]
+                setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        selectedCategories.add(category)
+                    } else {
+                        selectedCategories.remove(category)
+                    }
+                }
+            }
+            checkboxContainer.addView(checkBox)
+        }
+
+        builder.setView(dialogView)
+        builder.setPositiveButton(R.string.ok) { dialog, _ ->
+            // Just return size of filtered list and updateListSizeTextView at once
+            updateListSizeTextView(productAdapter.filterByCategories(selectedCategories))
+            dialog.dismiss()
+        }
+        builder.create().show()
     }
 }

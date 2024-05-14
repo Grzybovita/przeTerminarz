@@ -73,6 +73,41 @@ class ProductDAO(context: Context) {
     return productList
   }
 
+  fun getFilteredProducts(categories: HashSet<Categories>): List<Product> {
+    val productList = mutableListOf<Product>()
+    if (categories.isEmpty()) {
+      return productList
+    }
+
+    val categoryNames = categories.joinToString(",") { "'${it.name}'" }
+    val selection = "${ProductDatabaseHelper.COLUMN_CATEGORY} IN ($categoryNames)"
+    val cursor: Cursor = database.query(
+      ProductDatabaseHelper.TABLE_NAME,
+      null,
+      selection,
+      null,
+      null,
+      null,
+      null
+    )
+
+    with(cursor) {
+      while (moveToNext()) {
+        val id = getInt(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_ID))
+        val name = getString(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_NAME))
+        val image = getString(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_IMAGE))
+        val category = getString(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_CATEGORY))
+        val expirationDate = getLong(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_EXPIRATION_DATE))
+        val amount = getInt(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_AMOUNT))
+        val state = getString(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_STATE))
+        val discarded = getInt(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_IS_DISCARDED)) > 0
+        val product = Product(id, name, image, Categories.valueOf(category), expirationDate, amount, States.valueOf(state), discarded)
+        productList.add(product)
+      }
+    }
+    cursor.close()
+    return productList
+  }
 
   fun close() {
     dbHelper.close()

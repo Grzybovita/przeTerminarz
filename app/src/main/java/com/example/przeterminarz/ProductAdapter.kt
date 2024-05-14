@@ -7,6 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ProductAdapter(
     private var productList: ArrayList<Product>,
@@ -16,7 +19,12 @@ class ProductAdapter(
 
     inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val productImage: ImageView = itemView.findViewById(R.id.iv_product)
-        val productName: TextView = itemView.findViewById(R.id.tv_product_text)
+        val productName: TextView = itemView.findViewById(R.id.tv_product_name)
+        val productCategory: TextView = itemView.findViewById(R.id.tv_product_category)
+        val productExpirationDate: TextView = itemView.findViewById(R.id.tv_product_expiration_date)
+        val productAmount: TextView = itemView.findViewById(R.id.tv_product_amount)
+        val productState: TextView = itemView.findViewById(R.id.tv_product_state)
+        val productIsDiscarded: TextView = itemView.findViewById(R.id.tv_product_is_discarded)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -37,16 +45,23 @@ class ProductAdapter(
             .load(currentProduct.image)
             .into(holder.productImage)
         holder.productName.text = currentProduct.name
+        holder.productCategory.text = currentProduct.category.name
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        holder.productExpirationDate.text = dateFormat.format(Date(currentProduct.expirationDate))
+        holder.productAmount.text = currentProduct.amount.toString()
+        holder.productState.text = currentProduct.state.name
+        holder.productIsDiscarded.text = if (currentProduct.isDiscarded) "Discarded" else "Not Discarded"
 
         holder.itemView.setOnClickListener {
             itemClickListener(currentProduct)
         }
     }
 
-    fun filterByCategory(category: Categories) {
+    fun filterByCategories(categories: HashSet<Categories>) : Int {
         productList = productDAO.getAllProducts() as ArrayList<Product>;
         //TODO optimize, prepare sql statement with WHERE clause
-        productList = productList.filter { it.category == category } as ArrayList<Product>
+        productList = productList.filter { categories.contains(it.category) } as ArrayList<Product>
         notifyDataSetChanged()
+        return productList.size;
     }
 }
