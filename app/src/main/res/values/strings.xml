@@ -6,6 +6,7 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="add_product">Add new product</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -45,4 +46,8 @@
     </string>
     <string name="product_image">Product image</string>
     <string name="productText">Product text</string>
+    <string name="list_size">"List size: "</string>
+    <string name="product_image_description">Product Image</string>
+    <string name="product_name">Product Name</string>
+    <string name="pick_image">Pick Image</string>
 </resources>

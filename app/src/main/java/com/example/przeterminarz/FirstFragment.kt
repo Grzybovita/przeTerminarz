@@ -12,18 +12,17 @@ import com.example.przeterminarz.databinding.FragmentFirstBinding
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class FirstFragment() : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
     private lateinit var productList : ArrayList<Product>
     private lateinit var productAdapter : ProductAdapter
+    private lateinit var productDAO: ProductDAO
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
+            inflater: LayoutInflater,
+            container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
 
@@ -31,29 +30,36 @@ class FirstFragment : Fragment() {
 
         productList = ArrayList()
         productAdapter = ProductAdapter(productList)
+        productDAO = ProductDAO(requireContext())
         initProductListItems()
-        binding.recyclerView.layoutManager =
-            LinearLayoutManager(this.context)
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(this.context)
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.adapter = productAdapter
 
-        return binding.root
+        updateListSizeTextView(productList.size)
 
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
+        binding.buttonAddProduct.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
 
         binding.buttonFilterCategory1.setOnClickListener {
             productAdapter.filterByCategory(Categories.CATEGORY1)
+            updateListSizeTextView(productAdapter.itemCount)
+            //TODO test only!
+            var products = productDAO.getAllProducts();
+            println(products);
         }
 
         binding.buttonFilterCategory2.setOnClickListener {
             productAdapter.filterByCategory(Categories.CATEGORY2)
+            updateListSizeTextView(productAdapter.itemCount)
         }
     }
 
@@ -63,7 +69,14 @@ class FirstFragment : Fragment() {
     }
 
     private fun initProductListItems(){
-        productList.add(Product("Ball 1", R.drawable.ball, Categories.CATEGORY1))
-        productList.add(Product("Ball 2", R.drawable.ball2, Categories.CATEGORY2))
+        productList.add(Product("Ball 1", "drawable/ball.jpg", Categories.CATEGORY1))
+        productList.add(Product("Ball 2", "drawable/ball2.jpg", Categories.CATEGORY2))
+    }
+
+    private fun updateListSizeTextView(size: Int) {
+        binding.textView.text = buildString {
+            append(getString(R.string.list_size))
+            append(size)
+        }
     }
 }
