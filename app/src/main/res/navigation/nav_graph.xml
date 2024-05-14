@@ -10,17 +10,23 @@
         android:name="com.example.przeterminarz.FirstFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
-
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/SecondFragment" >
+            <argument
+                android:name="product"
+                app:argType="com.example.przeterminarz.Product" />
+            <argument
+                android:name="edit_mode"
+                app:argType="boolean" />
+        </action>
     </fragment>
+
     <fragment
         android:id="@+id/SecondFragment"
         android:name="com.example.przeterminarz.SecondFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
-
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />

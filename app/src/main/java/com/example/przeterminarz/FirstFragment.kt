@@ -25,13 +25,17 @@ class FirstFragment() : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
-        productList = ArrayList()
-        productAdapter = ProductAdapter(productList)
         productDAO = ProductDAO(requireContext())
-        initProductListItems()
+        productList = initProductListItems()
+        productAdapter = ProductAdapter(productList, productDAO) { product ->
+            val bundle = Bundle().apply {
+                putParcelable("product", product)
+                putBoolean("edit_mode", true)
+            }
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+        }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this.context)
         binding.recyclerView.setHasFixedSize(true)
@@ -52,7 +56,7 @@ class FirstFragment() : Fragment() {
         binding.buttonFilterCategory1.setOnClickListener {
             productAdapter.filterByCategory(Categories.CATEGORY1)
             updateListSizeTextView(productAdapter.itemCount)
-            //TODO test only!
+            //TODO test only, remove it later!
             var products = productDAO.getAllProducts();
             println(products);
         }
@@ -68,9 +72,8 @@ class FirstFragment() : Fragment() {
         _binding = null
     }
 
-    private fun initProductListItems(){
-        productList.add(Product("Ball 1", "drawable/ball.jpg", Categories.CATEGORY1))
-        productList.add(Product("Ball 2", "drawable/ball2.jpg", Categories.CATEGORY2))
+    private fun initProductListItems(): ArrayList<Product> {
+        return productDAO.getAllProducts() as ArrayList<Product>;
     }
 
     private fun updateListSizeTextView(size: Int) {

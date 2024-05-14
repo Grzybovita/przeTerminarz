@@ -8,12 +8,16 @@ class ProductDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
 
   companion object {
     const val DATABASE_NAME = "products.db"
-    const val DATABASE_VERSION = 1
+    const val DATABASE_VERSION = 2
     const val TABLE_NAME = "products"
     const val COLUMN_ID = "id"
     const val COLUMN_NAME = "name"
     const val COLUMN_IMAGE = "image"
     const val COLUMN_CATEGORY = "category"
+    const val COLUMN_EXPIRATION_DATE = "expiration_date"
+    const val COLUMN_AMOUNT = "amount"
+    const val COLUMN_STATE = "state"
+    const val COLUMN_IS_DISCARDED = "discarded"
   }
 
   override fun onCreate(db: SQLiteDatabase) {
@@ -22,7 +26,11 @@ class ProductDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
                 $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COLUMN_NAME TEXT,
                 $COLUMN_IMAGE INTEGER,
-                $COLUMN_CATEGORY TEXT
+                $COLUMN_CATEGORY TEXT,
+                $COLUMN_EXPIRATION_DATE INTEGER,
+                $COLUMN_AMOUNT INTEGER,
+                $COLUMN_STATE TEXT,
+                $COLUMN_IS_DISCARDED INTEGER
             )
         """
     db.execSQL(createTable)

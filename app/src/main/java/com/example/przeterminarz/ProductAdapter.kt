@@ -8,7 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class ProductAdapter(private var productList: ArrayList<Product>) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
+class ProductAdapter(
+    private var productList: ArrayList<Product>,
+    private val productDAO: ProductDAO,
+    private val itemClickListener: (Product) -> Unit
+) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val productImage: ImageView = itemView.findViewById(R.id.iv_product)
@@ -29,16 +33,20 @@ class ProductAdapter(private var productList: ArrayList<Product>) : RecyclerView
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val currentProduct = productList[position]
-        // Load the image using Glide
         Glide.with(holder.itemView.context)
             .load(currentProduct.image)
             .into(holder.productImage)
         holder.productName.text = currentProduct.name
+
+        holder.itemView.setOnClickListener {
+            itemClickListener(currentProduct)
+        }
     }
 
     fun filterByCategory(category: Categories) {
+        productList = productDAO.getAllProducts() as ArrayList<Product>;
+        //TODO optimize, prepare sql statement with WHERE clause
         productList = productList.filter { it.category == category } as ArrayList<Product>
         notifyDataSetChanged()
     }
 }
-
