@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -116,6 +117,7 @@ class SecondFragment : Fragment() {
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         )
+        datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
     }
 
@@ -125,16 +127,32 @@ class SecondFragment : Fragment() {
         val category = Categories.valueOf(binding.spinnerCategory.selectedItem.toString())
         val dateStr = binding.editTextExpirationDate.text.toString()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val validToTimestamp = dateFormat.parse(dateStr)?.time ?: 0L
+        var expirationDateTimestamp = 0L
+        if (dateStr != "")
+        {
+            expirationDateTimestamp = dateFormat.parse(dateStr)?.time!!
+        }
         val amount = binding.editTextQuantity.text.toString().toIntOrNull() ?: 0
         val state = States.valueOf(binding.spinnerState.selectedItem.toString())
         val isDiscarded = binding.switchDiscarded.isChecked
 
-        selectedImageUri?.let { uri ->
-
+        if (name.isEmpty())
+        {
+            Toast.makeText(requireContext(), R.string.validation_name_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
+        else if (amount <= 0)
+        {
+            Toast.makeText(requireContext(), R.string.validation_quantity_not_valid, Toast.LENGTH_SHORT).show()
+            return
+        }
+        else if (dateStr.isEmpty())
+        {
+            Toast.makeText(requireContext(), R.string.validation_date_empty, Toast.LENGTH_SHORT).show()
+            return
         }
 
-        val newProduct = Product(0, name, selectedImageUri.toString(), category, validToTimestamp, amount, state, isDiscarded)
+        val newProduct = Product(0, name, selectedImageUri.toString(), category, expirationDateTimestamp, amount, state, isDiscarded)
         productDAO.addProduct(newProduct)
         findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
     }
@@ -145,16 +163,37 @@ class SecondFragment : Fragment() {
         val category = Categories.valueOf(binding.spinnerCategory.selectedItem.toString())
         val dateStr = binding.editTextExpirationDate.text.toString()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val validToTimestamp = dateFormat.parse(dateStr)?.time ?: 0L
+        var expirationDateTimestamp = 0L
+        if (dateStr != "")
+        {
+            expirationDateTimestamp = dateFormat.parse(dateStr)?.time!!
+        }
         val amount = binding.editTextQuantity.text.toString().toIntOrNull() ?: 0
         val state = States.valueOf(binding.spinnerState.selectedItem.toString())
         val isDiscarded = binding.switchDiscarded.isChecked
+
+        //TODO merge 'create' and 'update' validation, code redundancy
+        if (name.isEmpty())
+        {
+            Toast.makeText(requireContext(), R.string.validation_name_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
+        else if (amount <= 0)
+        {
+            Toast.makeText(requireContext(), R.string.validation_quantity_not_valid, Toast.LENGTH_SHORT).show()
+            return
+        }
+        else if (dateStr.isEmpty())
+        {
+            Toast.makeText(requireContext(), R.string.validation_date_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
 
         productToEdit?.let { product ->
             product.name = name
             product.image = selectedImageUri.toString()
             product.category = category
-            product.expirationDate = validToTimestamp
+            product.expirationDate = expirationDateTimestamp
             product.amount = amount
             product.state = state
             product.isDiscarded = isDiscarded

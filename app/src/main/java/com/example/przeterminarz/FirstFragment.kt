@@ -11,6 +11,9 @@ import android.widget.LinearLayout
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.przeterminarz.databinding.FragmentFirstBinding
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -200,10 +203,16 @@ class FirstFragment : Fragment() {
     private fun isProductEditable(expirationDate: Long): Boolean
     {
         val currentDate = System.currentTimeMillis()
-        //just simply convert timestamp to days and check if expirationDay is at least for next day
-        val expirationDateOnly = expirationDate / (1000 * 60 * 60 * 24)
-        val currentDateOnly = currentDate / (1000 * 60 * 60 * 24)
-        return expirationDateOnly > currentDateOnly
+
+        val currentDateOnly = Date(currentDate)
+        val expirationDateOnly = Date(expirationDate)
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        val currentDateFormatted = dateFormat.format(currentDateOnly)
+        val expirationDateFormatted = dateFormat.format(expirationDateOnly)
+
+        return expirationDateFormatted > currentDateFormatted
     }
 
     private fun showExpiredProductDialog()

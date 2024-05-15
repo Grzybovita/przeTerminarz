@@ -29,4 +29,8 @@
     <string name="expired_product_title">Cannot edit product</string>
     <string name="expired_product_message">Cannot edit expired product!</string>
     <string name="are_you_sure_mark_as_expired">Cannot remove expired product. Do you want to mark it as discarded?</string>
+    <string name="validation_name_empty">Name cannot be empty!</string>
+    <string name="validation_quantity_not_valid">Quantity has to be greater than 0!</string>
+    <string name="validation_date_empty">Date cannot be empty!</string>
+
 </resources>
