@@ -20,7 +20,8 @@ class ProductDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
     const val COLUMN_IS_DISCARDED = "discarded"
   }
 
-  override fun onCreate(db: SQLiteDatabase) {
+  override fun onCreate(db: SQLiteDatabase)
+  {
     val createTable = """
             CREATE TABLE $TABLE_NAME (
                 $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,7 +37,8 @@ class ProductDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
     db.execSQL(createTable)
   }
 
-  override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+  override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int)
+  {
     db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
     onCreate(db)
   }

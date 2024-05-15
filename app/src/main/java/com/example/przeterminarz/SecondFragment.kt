@@ -47,7 +47,8 @@ class SecondFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
+    {
         super.onViewCreated(view, savedInstanceState)
 
         // Set up the category spinner
@@ -99,7 +100,8 @@ class SecondFragment : Fragment() {
         }
     }
 
-    private fun showDatePickerDialog() {
+    private fun showDatePickerDialog()
+    {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(
             requireContext(),
@@ -117,7 +119,8 @@ class SecondFragment : Fragment() {
         datePickerDialog.show()
     }
 
-    private fun saveProduct() {
+    private fun saveProduct()
+    {
         val name = binding.editTextProductName.text.toString()
         val category = Categories.valueOf(binding.spinnerCategory.selectedItem.toString())
         val dateStr = binding.editTextExpirationDate.text.toString()
@@ -136,7 +139,8 @@ class SecondFragment : Fragment() {
         findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
     }
 
-    private fun updateProduct() {
+    private fun updateProduct()
+    {
         val name = binding.editTextProductName.text.toString()
         val category = Categories.valueOf(binding.spinnerCategory.selectedItem.toString())
         val dateStr = binding.editTextExpirationDate.text.toString()
@@ -160,19 +164,22 @@ class SecondFragment : Fragment() {
         }
     }
 
-    private fun openGallery() {
+    private fun openGallery()
+    {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         getImageContent.launch(intent)
     }
 
-    private fun loadImage(imageUri: String) {
+    private fun loadImage(imageUri: String)
+    {
         //Load the image into the ImageView using Glide
         Glide.with(requireContext())
             .load(imageUri)
             .into(binding.imageViewProduct)
     }
 
-    override fun onDestroyView() {
+    override fun onDestroyView()
+    {
         super.onDestroyView()
         _binding = null
         productDAO.close()
