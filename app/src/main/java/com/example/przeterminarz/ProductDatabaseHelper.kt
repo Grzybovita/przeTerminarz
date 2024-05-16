@@ -8,7 +8,7 @@ class ProductDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
 
   companion object {
     const val DATABASE_NAME = "products.db"
-    const val DATABASE_VERSION = 2
+    const val DATABASE_VERSION = 3
     const val TABLE_NAME = "products"
     const val COLUMN_ID = "id"
     const val COLUMN_NAME = "name"

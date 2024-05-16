@@ -15,15 +15,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.example.przeterminarz.databinding.FragmentSecondBinding
+import com.example.przeterminarz.databinding.FragmentAddProductBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class SecondFragment : Fragment() {
+class AddProductFragment : Fragment() {
 
-    private var _binding: FragmentSecondBinding? = null
+    private var _binding: FragmentAddProductBinding? = null
     private val binding get() = _binding!!
     private lateinit var productDAO: ProductDAO
     private var selectedImageUri: Uri? = null
@@ -43,7 +43,7 @@ class SecondFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+        _binding = FragmentAddProductBinding.inflate(inflater, container, false)
         productDAO = ProductDAO(requireContext())
         return binding.root
     }
@@ -89,12 +89,15 @@ class SecondFragment : Fragment() {
         }
         if (this.editMode)
         {
+            //TODO it doesnt work, fix it
+            activity?.title = getString(R.string.edit_product_fragment_label)
             binding.buttonSaveProduct.visibility = View.GONE
             binding.buttonSaveProduct.isEnabled = false
             binding.buttonEditProduct.setOnClickListener { updateProduct() }
         }
         else
         {
+            activity?.title = getString(R.string.add_product_fragment_label)
             binding.buttonEditProduct.visibility = View.GONE
             binding.buttonEditProduct.isEnabled = false
             binding.buttonSaveProduct.setOnClickListener { saveProduct() }
@@ -154,7 +157,7 @@ class SecondFragment : Fragment() {
 
         val newProduct = Product(0, name, selectedImageUri.toString(), category, expirationDateTimestamp, amount, state, isDiscarded)
         productDAO.addProduct(newProduct)
-        findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        findNavController().navigate(R.id.action_AddProductFragment_to_DisplayListFragment)
     }
 
     private fun updateProduct()
@@ -199,7 +202,7 @@ class SecondFragment : Fragment() {
             product.isDiscarded = isDiscarded
 
             productDAO.updateProduct(product)
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+            findNavController().navigate(R.id.action_AddProductFragment_to_DisplayListFragment)
         }
     }
 

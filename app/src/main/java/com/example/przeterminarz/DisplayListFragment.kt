@@ -10,7 +10,7 @@ import android.widget.CheckBox
 import android.widget.LinearLayout
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.przeterminarz.databinding.FragmentFirstBinding
+import com.example.przeterminarz.databinding.FragmentDisplayListBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,9 +18,9 @@ import java.util.Locale
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class DisplayListFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentDisplayListBinding? = null
     private val binding get() = _binding!!
     private lateinit var productList: ArrayList<Product>
     private lateinit var productAdapter: ProductAdapter
@@ -32,7 +32,10 @@ class FirstFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentDisplayListBinding.inflate(inflater, container, false)
+
+        selectedCategories.addAll(Categories.entries)
+        selectedStates.addAll(States.entries)
 
         productDAO = ProductDAO(requireContext())
         productList = initProductListItems()
@@ -43,7 +46,7 @@ class FirstFragment : Fragment() {
                     putParcelable("product", product)
                     putBoolean("edit_mode", true)
                 }
-                findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment, bundle)
+                findNavController().navigate(R.id.action_DisplayListFragment_to_AddProductFragment, bundle)
             }
             else
             {
@@ -74,7 +77,7 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonAddProduct.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            findNavController().navigate(R.id.action_DisplayListFragment_to_AddProductFragment)
         }
 
         binding.buttonCategory.setOnClickListener {

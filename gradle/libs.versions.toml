@@ -12,6 +12,7 @@ navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 glide = "5.0.0-rc01"
 androidxNavigationSafeargsGradlePlugin = "2.7.7"
+materialVersion = "1.12.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,6 +26,7 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 androidx-androidx-navigation-safeargs-gradle-plugin = { group = "androidx.navigation.safeargs", name = "androidx.navigation.safeargs.gradle.plugin", version.ref = "androidxNavigationSafeargsGradlePlugin" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

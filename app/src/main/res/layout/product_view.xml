@@ -7,7 +7,8 @@
     android:layout_marginHorizontal="10dp"
     android:layout_marginVertical="16dp"
     app:cardCornerRadius="20dp"
-    app:cardElevation="5dp">
+    app:cardElevation="5dp"
+    app:cardBackgroundColor="@color/light_grey">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,6 +18,7 @@
             android:id="@+id/iv_product"
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:layout_marginStart="10dp"
             android:contentDescription="@string/product_image"
             android:scaleType="fitXY"
             android:src="@drawable/product1"
@@ -28,18 +30,20 @@
             android:id="@+id/tv_product_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="@string/product_name"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/iv_product"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/tv_product_category" />
+            app:layout_constraintBottom_toTopOf="@+id/tv_product_category"
+            app:layout_constraintStart_toEndOf="@+id/iv_product"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_product_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="@string/product_category"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -50,6 +54,7 @@
             android:id="@+id/tv_product_expiration_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="@string/product_expiration_date"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -60,6 +65,7 @@
             android:id="@+id/tv_product_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="@string/product_quantity"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -70,6 +76,7 @@
             android:id="@+id/tv_product_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="@string/product_state"
             android:textColor="@color/black"
             android:textSize="16sp"
@@ -80,6 +87,7 @@
             android:id="@+id/tv_product_is_discarded"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="@string/product_is_discarded"
             android:textColor="@color/black"
             android:textSize="16sp"
