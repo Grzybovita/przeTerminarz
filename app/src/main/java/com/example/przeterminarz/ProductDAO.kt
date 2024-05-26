@@ -20,6 +20,7 @@ class ProductDAO(context: Context) {
       put(ProductDatabaseHelper.COLUMN_AMOUNT, product.amount)
       put(ProductDatabaseHelper.COLUMN_STATE, product.state.name)
       put(ProductDatabaseHelper.COLUMN_IS_DISCARDED, product.isDiscarded)
+      put(ProductDatabaseHelper.COLUMN_UNIT, product.unit)
     }
     return database.insert(ProductDatabaseHelper.TABLE_NAME, null, values)
   }
@@ -34,6 +35,7 @@ class ProductDAO(context: Context) {
       put(ProductDatabaseHelper.COLUMN_AMOUNT, product.amount)
       put(ProductDatabaseHelper.COLUMN_STATE, product.state.name)
       put(ProductDatabaseHelper.COLUMN_IS_DISCARDED, product.isDiscarded)
+      put(ProductDatabaseHelper.COLUMN_UNIT, product.unit)
     }
     val selection = "${ProductDatabaseHelper.COLUMN_ID} = ?"
     val selectionArgs = arrayOf(product.id.toString())
@@ -68,7 +70,8 @@ class ProductDAO(context: Context) {
         val amount = getInt(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_AMOUNT))
         val state = getString(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_STATE))
         val discarded = getInt(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_IS_DISCARDED)) > 0
-        val product = Product(id, name, image, Categories.valueOf(category), expirationDate, amount, States.valueOf(state), discarded)
+        val unit = getString(getColumnIndexOrThrow(ProductDatabaseHelper.COLUMN_UNIT))
+        val product = Product(id, name, image, Categories.valueOf(category), expirationDate, amount, States.valueOf(state), discarded, unit)
         productList.add(product)
       }
     }

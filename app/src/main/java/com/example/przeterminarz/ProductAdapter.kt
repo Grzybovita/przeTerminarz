@@ -36,7 +36,13 @@ class ProductAdapter(
             productCategory.text = product.category.name
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             productExpirationDate.text = dateFormat.format(Date(product.expirationDate))
-            productAmount.text = product.amount.toString()
+
+            productAmount.text = buildString {
+                append(product.amount.toString())
+                append(" ")
+                append(product.unit)
+            }
+
             productState.text = product.state.name
             productIsDiscarded.text = if (product.isDiscarded) "Discarded" else "Not Discarded"
 
@@ -73,6 +79,7 @@ class ProductAdapter(
 
     fun filterByCategoriesAndStates(categories: HashSet<Categories>, states: HashSet<States>): Int
     {
+        //TODO may be optimized
         productList = productDAO.getAllProducts() as ArrayList<Product>
         productList = productList.filter { categories.contains(it.category) } as ArrayList<Product>
         productList = productList.filter { states.contains(it.state) } as ArrayList<Product>

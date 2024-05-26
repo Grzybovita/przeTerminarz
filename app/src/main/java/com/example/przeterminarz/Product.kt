@@ -11,7 +11,8 @@ data class Product(
     var expirationDate: Long,
     var amount: Int,
     var state: States,
-    var isDiscarded: Boolean
+    var isDiscarded: Boolean,
+    var unit: String
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt() ?: 0,
@@ -21,7 +22,8 @@ data class Product(
         parcel.readLong() ?: 0,
         parcel.readInt() ?: 0,
         States.valueOf(parcel.readString() ?: States.UNKNOWN.name),
-        parcel.readBoolean() ?: false
+        parcel.readBoolean() ?: false,
+        parcel.readString() ?: ""
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -33,6 +35,7 @@ data class Product(
         parcel.writeInt(amount)
         parcel.writeString(state.name)
         parcel.writeBoolean(isDiscarded)
+        parcel.writeString(unit)
     }
 
     override fun describeContents(): Int {

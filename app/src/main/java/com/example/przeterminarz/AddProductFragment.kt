@@ -52,17 +52,23 @@ class AddProductFragment : Fragment() {
     {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set up the category spinner
+        //set category spinner
         val categories = Categories.entries.map { it.name }
         val categorySpinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCategory.adapter = categorySpinnerAdapter
 
-        // Set up the states spinner
+        //set states spinner
         val states = States.entries.map { it.name }
         val statesSpinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, states)
         statesSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerState.adapter = statesSpinnerAdapter
+
+        //set unit spinner
+        val units = listOf("", "bottles", "tabs", "units", "pieces")
+        val unitSpinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, units)
+        unitSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerUnit.adapter = unitSpinnerAdapter
 
         binding.editTextExpirationDate.setOnClickListener {
             showDatePickerDialog()
@@ -81,6 +87,7 @@ class AddProductFragment : Fragment() {
                 binding.spinnerCategory.setSelection(categories.indexOf(product.category.name))
                 binding.spinnerState.setSelection(states.indexOf(product.state.name))
                 binding.switchDiscarded.isChecked = product.isDiscarded
+                binding.spinnerUnit.setSelection(units.indexOf(product.unit))
             }
         }
 
@@ -89,7 +96,6 @@ class AddProductFragment : Fragment() {
         }
         if (this.editMode)
         {
-            //TODO it doesnt work, fix it
             activity?.title = getString(R.string.edit_product_fragment_label)
             binding.buttonSaveProduct.visibility = View.GONE
             binding.buttonSaveProduct.isEnabled = false
@@ -138,6 +144,7 @@ class AddProductFragment : Fragment() {
         val amount = binding.editTextQuantity.text.toString().toIntOrNull() ?: 0
         val state = States.valueOf(binding.spinnerState.selectedItem.toString())
         val isDiscarded = binding.switchDiscarded.isChecked
+        var unit = binding.spinnerUnit.selectedItem.toString()
 
         if (name.isEmpty())
         {
@@ -146,6 +153,7 @@ class AddProductFragment : Fragment() {
         }
         else if (amount <= 0)
         {
+            unit = "";
             Toast.makeText(requireContext(), R.string.validation_quantity_not_valid, Toast.LENGTH_SHORT).show()
             return
         }
@@ -154,8 +162,14 @@ class AddProductFragment : Fragment() {
             Toast.makeText(requireContext(), R.string.validation_date_empty, Toast.LENGTH_SHORT).show()
             return
         }
+        else if (amount > 0 && unit.isEmpty())
+        {
+            Toast.makeText(requireContext(), R.string.validation_unit_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        val newProduct = Product(0, name, selectedImageUri.toString(), category, expirationDateTimestamp, amount, state, isDiscarded)
+        val newProduct = Product(0, name, selectedImageUri.toString(), category, expirationDateTimestamp, amount, state, isDiscarded, unit)
+
         productDAO.addProduct(newProduct)
         findNavController().navigate(R.id.action_AddProductFragment_to_DisplayListFragment)
     }
@@ -174,6 +188,7 @@ class AddProductFragment : Fragment() {
         val amount = binding.editTextQuantity.text.toString().toIntOrNull() ?: 0
         val state = States.valueOf(binding.spinnerState.selectedItem.toString())
         val isDiscarded = binding.switchDiscarded.isChecked
+        var unit = binding.spinnerState.selectedItem.toString()
 
         //TODO merge 'create' and 'update' validation, code redundancy
         if (name.isEmpty())
@@ -183,12 +198,18 @@ class AddProductFragment : Fragment() {
         }
         else if (amount <= 0)
         {
+            unit = "";
             Toast.makeText(requireContext(), R.string.validation_quantity_not_valid, Toast.LENGTH_SHORT).show()
             return
         }
         else if (dateStr.isEmpty())
         {
             Toast.makeText(requireContext(), R.string.validation_date_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
+        else if (amount > 0 && unit.isEmpty())
+        {
+            Toast.makeText(requireContext(), R.string.validation_unit_empty, Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -200,7 +221,7 @@ class AddProductFragment : Fragment() {
             product.amount = amount
             product.state = state
             product.isDiscarded = isDiscarded
-
+            product.unit = unit
             productDAO.updateProduct(product)
             findNavController().navigate(R.id.action_AddProductFragment_to_DisplayListFragment)
         }

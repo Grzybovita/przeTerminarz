@@ -33,5 +33,8 @@
     <string name="validation_name_empty">Name cannot be empty!</string>
     <string name="validation_quantity_not_valid">Quantity has to be greater than 0!</string>
     <string name="validation_date_empty">Date cannot be empty!</string>
+    <string name="validation_unit_empty">Unit cannot be empty!</string>
+    <string name="product">product</string>
+    <string name="products">products</string>
 
 </resources>
